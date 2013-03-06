@@ -3,3 +3,15 @@
 	margin-left: auto;
 	margin-right: auto;
 }
+
+.batman {
+	margin: 0px auto;
+	text-align: center;
+}
+
+.centered-pills { text-align:center; }
+.centered-pills ul.nav-pills { display:inline-block; }
+.centered-pills li { display:inline; }
+.centered-pills a { float:left; }
+* html .centered-pills ul.nav-pills { display:inline; } /* IE6 */
+*+html .centered-pills ul.nav-pills { display:inline; } /* IE7 */
