@@ -7,6 +7,13 @@ html
 
     body
         div.container
-            img(src='/images/nashvillejs.png', style='height: 300px; width: auto; margin-top: 100px;').center.img-polaroid
+            div.center
+                img(src='/images/nashvillejs.png', style='height: 300px; width: auto; margin-top: 100px;').center.img-polaroid
+
+                br
+                br
+
+                p(style='margin: 0px auto; text-align: center;')
+                    code console.log(new Array(10).join(Number.NaN) + " BATMAN!");
 
         script(src='/scripts/bootstrap.min.js')
