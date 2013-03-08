@@ -11,12 +11,18 @@ var redis_url = url.parse(process.env.OPENREDIS_URL)
 var app = express()
   , db  = redis.createClient(redis_url.port, redis_url.hostname).auth(redis_url.auth.split(':')[1])
 
+var storeConfig = {
+    host: redis_url.hostname
+  , port: redis_url.port
+  , pass: redis_url.auth.split(':')[1]
+}
+
 app.use(express.logger())
 app.use(express.bodyParser())
 app.use(express.methodOverride())
 app.use(express.cookieParser())
 app.use(express.session({
-  store: new RedisStore
+  store: new RedisStore(storeConfig)
 , secret: '802894782dd90d95ed3b7e6d997bd9bae09d13446a133a28a965840645f40b85'
 }))
 app.use(passport.initialize())
@@ -25,6 +31,8 @@ app.use(app.router)
 
 app.set('views', __dirname + '/views')
 app.use(express.static(__dirname + '/public'))
+
+// TODO: reset bitbucker & github keys, put into env, and remove from version contol.
 
 passport.use(new BitBucket({
     consumerKey: "LNkTZHv6bKRCaY94Ac"
