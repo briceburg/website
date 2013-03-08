@@ -1,12 +1,15 @@
 var express    = require('express')
+  , url        = require('url')
   , redis      = require('redis')
   , RedisStore = require('connect-redis')(express)
   , passport   = require('passport')
   , Github     = require('passport-github').Strategy
   , BitBucket  = require('passport-bitbucket').Strategy
 
+var redis_url = url.parse(process.env.OPENREDIS_URL)
+
 var app = express()
-  , db  = redis.createClient()
+  , db  = redis.createClient(redis_url.port, redis_url.hostname).auth(redis_url.auth.split(':')[1])
 
 app.use(express.logger())
 app.use(express.bodyParser())

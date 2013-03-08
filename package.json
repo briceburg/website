@@ -12,7 +12,6 @@
     "express": "3.1.x"
   , "jade": "0.28.x"
   , "redis": "*"
-  , "hiredis": "*"
   , "connect-redis": "*"
   , "passport": "0.1.x"
   , "passport-github": "0.1.x"
