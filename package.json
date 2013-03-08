@@ -1,10 +1,6 @@
 {
-  "name": "nashjs",
-  "subdomain": "nashjs",
-  "domains": [
-    "nashjs.org",
-    "www.nashjs.org"
-  ],
+  "name": "nashjs-staging",
+  "subdomain": "staging.nashjs",
   "scripts": {
     "start": "app.js"
   },
@@ -17,6 +13,7 @@
   , "jade": "0.28.x"
   , "redis": "*"
   , "hiredis": "*"
+  , "connect-redis": "*"
   , "passport": "0.1.x"
   , "passport-github": "0.1.x"
   , "passport-bitbucket": "0.1.x"

@@ -1,28 +1,21 @@
-!!! 5
-html
-    head
-        title NashJs
-        link(rel='stylesheet', href='/styles/bootstrap.min.css')
-        link(rel='stylesheet', href='/styles/main.css')
-        link(rel='icon', type='image/png', href='/images/nashvillejs-favicon.png')
+include layout
 
-    body
-        div.container
-            div(style='margin-top: 20px;').center
-                div.centered-pills
-                    ul.nav.nav-pills
-                        li
-                            a(href='http://github.com/nashjs') github
-                        li
-                            a(href='http://twitter.com/nash_js') twitter
-                        li
-                            a(href='#') blog
-                        li
-                            a(href='#') jobs
-                        li
-                            a(href='https://groups.google.com/forum/?fromgroups#!forum/nashjs') google group
+div.container
+    div(style='margin-top: 20px;').center
+        div.centered-pills
+            ul.nav.nav-pills
+                li
+                    a(href='http://github.com/nashjs') github
+                li
+                    a(href='http://twitter.com/nash_js') twitter
+                li
+                    a(href='#') blog
+                li
+                    a(href='/jobs') jobs
+                li
+                    a(href='https://groups.google.com/forum/?fromgroups#!forum/nashjs') google group
 
-                img(src='/images/nashvillejs.png', style='height: 300px; width: auto;').center.img-polaroid
+        img(src='/images/nashvillejs.png', style='height: 300px; width: auto;').center.img-polaroid
 
-                p.batman
-                    code(onclick='console.log(Array(16).join("wat" - 1) + " Batman!");') console.log(Array(16).join("wat" - 1) + " Batman!");
+        p.batman
+            code(onclick='console.log(Array(16).join("wat" - 1) + " Batman!");') console.log(Array(16).join("wat" - 1) + " Batman!");
