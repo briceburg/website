@@ -32,6 +32,14 @@ app.use(app.router)
 app.set('views', __dirname + '/views')
 app.use(express.static(__dirname + '/public'))
 
+passport.serializeUser(function(user, done){
+
+})
+
+passport.deserializeUser(function(user, done){
+
+})
+
 // TODO: reset bitbucker & github keys, put into env, and remove from version contol.
 
 passport.use(new BitBucket({
