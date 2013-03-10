@@ -34,7 +34,6 @@ app.use(passport.session({
 , secret: 'cf6078f4a5481fe7011e61271794de01e72f0aabc6b5686fe0101de94a892964'
 }))
 app.use(app.router)
-app.set('views', __dirname + '/views')
 app.use(express.static(__dirname + '/public'))
 
 // Setup Mongo
@@ -43,19 +42,44 @@ db.on('error', console.error.bind(console, 'connection error:'))
 
 var userSchema = mongoose.Schema({
   username: String
-, service:  String
+, provider: String
 , gravatar: String
-, created: {type: Date, default: Date.now}
+, created:  {type: Date, default: Date.now}
 })
+
+userSchema.statics.FindOneOrCreate = function(profile, func){
+  this.model('User').findOne({'username': profile.username.toLowerCase(), 'provider': profile.provider.toLowerCase()}, function(err, user){
+    if (err) {
+      return func(err, null)
+    } // or should I throw the exception?
+
+    if (user) {
+      func(null, user)
+    } else {
+      user = new User({
+        username: profile.username.toLowerCase()
+      , provider: profile.provider.toLowerCase()
+      })
+
+      user.save(function(err){
+        if (err) {
+          return func(err, null)
+        } // same thing
+
+        return func(null, user)
+      })
+    }
+  })
+}
 
 var User = mongoose.model('User', userSchema)
 
 var jobSchema = mongoose.Schema({
-  slug:     String
+  slug:     {type: String, unique: true}
 , body:     String
-, username: String
-, created:  {type: Date, deault: Date.now}
-, edited:   {type: Date}
+, user_id:  String
+, created:  {type: Date, default: Date.now, expires: '25d'}
+, edited:   {type: Date, default: Date.now}
 })
 
 var Job = mongoose.model('Job', jobSchema)
@@ -64,13 +88,25 @@ var Job = mongoose.model('Job', jobSchema)
 
 // TODO: reset bitbucket & github keys, put into env, and remove from version contol.
 
+passport.serializeUser(function(user, done){
+  done(null, user._id)
+})
+
+passport.deserializeUser(function(id, done){
+  User.findOne(id, function (err, user) {
+    done(err, user)
+  })
+})
+
 passport.use(new BitBucket({
     consumerKey: "LNkTZHv6bKRCaY94Ac"
   , consumerSecret: "rQX5ptmNKGmG6QYGghAfHtarETctc7RD"
   , callbackURL: "http://staging.nashjs.jit.su/auth/bitbucket/callback"
   },
-  function(token, tokenSecret, profile, done) {
-
+  function(token, tokenSecret, profile, done){
+    User.FindOneOrCreate(profile, function(err, user){
+      done(err, user)
+    })
   }
 ))
 
@@ -79,8 +115,10 @@ passport.use(new Github({
   , clientSecret: "4b9fad5294aed0080a77881e71d2c925666ec30d"
   , callbackURL: "http://staging.nashjs.jit.su/auth/github/callback"
   },
-  function(accessToken, refreshToken, profile, done) {
-
+  function(accessToken, refreshToken, profile, done){
+    User.FindOneOrCreate(profile, function(err, user){
+      done(err, user)
+    })
   }
 ))
 
@@ -104,20 +142,49 @@ app.get('/auth/bitbucket/callback', passport.authenticate('bitbucket', {successR
 app.get('/auth/github', passport.authenticate('github'))
 app.get('/auth/github/callback', passport.authenticate('github', {successRedirect: '/', failureRedirect: '/'}))
 
-app.get('/jobs', function(req, res) {
-  res.render('jobs.jade')
+app.get('/jobs', function(req, res){
+  var now = new Date()
+  var 25dAgo = now.setDate(now.getDate() - 25)
+
+  Jobs.where('date').gt(25dAgo).exec(function(err, jobs){
+    if (err) {
+      console.log(err)
+      res.send(500)
+    }
+
+    res.render('jobs.jade', {jobs: jobs})
+  })
 })
 
-app.get('/job/:id', function(req, res) {
-  res.render('job.jade')
+app.get('/job/:slug', function(req, res){
+  Jobs.where('slug').equals(req.params.slug).exec(function(err, job){
+    if (err) {
+      console.log(err)
+      res.send(500)
+    }
+
+    res.render('job.jade', {job: job})
+  })
 })
 
-app.get('/job/:id/edit', function(req, res) {
-  res.render('job-edit.jade')
+app.get('/job/:slug/edit', function(req, res){
+  Jobs.where('slug').equals(req.params.slug).where('user_id').equals(req.user._id), function(err, job){
+    res.render('job-edit.jade')
+  })
 })
 
-app.get('/job/:id/destroy', function(req, res) {
-  res.redirect('/jobs')
+app.get('/job/:slug/destroy', function(req, res){
+  Jobs.where('slug').equals(req.params.slug).where('user_id').equals(req.user._id), function(err, job){
+    res.redirect('jobs')
+  })
+})
+
+app.get('/posts', function(req, res){
+  res.send(404)
+})
+
+app.get('/post/:slug', function(req, res){
+  res.send(404)
 })
 
 // Serve
