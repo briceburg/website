@@ -7,4 +7,8 @@ app.get('/', function(req, res){
   res.render('index.jade')
 })
 
+app.get('/preview/code-of-conduct', function(req, res){
+  res.render('coc.jade')
+})
+
 app.listen(8080)
