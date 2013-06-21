@@ -11,4 +11,4 @@ app.get('/preview/code-of-conduct', function(req, res){
   res.render('coc.jade')
 })
 
-app.listen(process.end.PORT || 3000)
+app.listen(process.env.PORT || 3000)
